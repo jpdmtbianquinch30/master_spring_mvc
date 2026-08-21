@@ -1,13 +1,10 @@
 package master.rest;
 
-
 import master.entity.Product;
 import master.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -18,27 +15,22 @@ public class ProductRestController {
     private ProductService service;
 
     @GetMapping
-    public List<Product> list() {
-        List<Product> products = service.findAll();
-        return products;
-    }
+    public List<Product> list() { return service.findAll(); }
 
+    @GetMapping("/{id}")
+    public Product findById(@PathVariable Long id) { return service.findById(id); }
 
+    @GetMapping("/search")
+    public List<Product> search(@RequestParam String mot) { return service.findByMot(mot); }
 
     @PostMapping
-    public Product save(@RequestBody Product product) {
-
-      Product productSave = service.save(product);
-
-        return productSave ;
-    }
+    @ResponseStatus(HttpStatus.CREATED)
+    public Product save(@RequestBody Product product) { return service.save(product); }
 
     @DeleteMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
-
         service.delete(id);
-
-        return "Produit"+ id+ "supprime avec succes";
+        return "Produit " + id + " supprime avec succes";
     }
 
     @PutMapping("/{id}")
@@ -46,24 +38,14 @@ public class ProductRestController {
         Product productBd = service.findById(id);
         productBd.setLibelle(product.getLibelle());
         productBd.setPrix(product.getPrix());
-
-        Product productSave = service.save(productBd);
-
-        return productSave ;
+        return service.save(productBd);
     }
 
     @PatchMapping("/{id}")
     public Product updatePatch(@PathVariable Long id, @RequestBody Product product) {
         Product productBd = service.findById(id);
-        if(product.getLibelle()!=null){
-            productBd.setLibelle(product.getLibelle());
-        }
-        if(product.getPrix() != 0){
-            productBd.setPrix(product.getPrix());
-        }
-
-        Product productSave = service.save(productBd);
-
-        return productSave ;
+        if (product.getLibelle() != null) productBd.setLibelle(product.getLibelle());
+        if (product.getPrix() != 0) productBd.setPrix(product.getPrix());
+        return service.save(productBd);
     }
 }

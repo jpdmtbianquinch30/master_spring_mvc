@@ -164,7 +164,7 @@
   <!--                                                                      -->
   <!--   displaySourceFragment                                              -->
   <!--                       Should a source fragment be included in        -->
-  <!--                       exception messages? [true]                     -->
+  <!--                       master.exception messages? [true]                     -->
   <!--                                                                      -->
   <!--   dumpSmap            Should the SMAP info for JSR45 debugging be    -->
   <!--                       dumped to a file? [false]                      -->

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Formulaire type</title></head>
+<body>
+<form th:action="@{/types}" th:object="${type}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <input type="text" th:field="*{libelle}" placeholder="Libelle" />
+    <button type="submit">Enregistrer</button>
+</form>
+</body>
+</html>

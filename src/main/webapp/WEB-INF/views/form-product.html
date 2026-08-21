@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Formulaire produit</title></head>
+<body>
+<form th:action="@{/products}" th:object="${product}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <input type="text" th:field="*{libelle}" placeholder="Libelle" />
+    <input type="number" th:field="*{prix}" placeholder="Prix" step="0.01" />
+    <button type="submit">Enregistrer</button>
+</form>
+</body>
+</html>
