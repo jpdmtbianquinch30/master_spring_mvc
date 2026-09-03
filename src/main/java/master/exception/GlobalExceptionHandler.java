@@ -23,15 +23,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
-    // 409 - Produit déjà existant (conflit)
-    @ExceptionHandler(ProduitAlreadyExistsException.class)
-    @ResponseBody
-    public ResponseEntity<String> handleAlreadyExists(ProduitAlreadyExistsException ex) {
-        String message = ex.getMessage() != null ? ex.getMessage() : "Produit déjà existant";
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(message);
-    }
-
-    // 400 - Erreurs de validation declenchees par @Valid sur le DTO
+    // 400 - Erreurs de validation
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
@@ -48,6 +40,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGeneric(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Erreur interne : " + ex.getMessage());
+    }
+
+    // 409Produit existant deja
+    @ExceptionHandler(ProduitAlreadyExistsException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleAlreadyExists(ProduitAlreadyExistsException ex) {
+        String message = ex.getMessage() != null ? ex.getMessage() : "Produit déjà existant";
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(message);
     }
 
 }

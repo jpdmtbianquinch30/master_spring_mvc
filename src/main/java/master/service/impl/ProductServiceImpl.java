@@ -15,8 +15,12 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository repository;
 
     @Override
-    public Product save(Product product) { return repository.save(product); }
-
+    public Product save(Product product) {
+        if (repository.existsByLibelle(product.getLibelle())) {
+            throw new RuntimeException("Un produit avec ce libellé existe déjà");
+        }
+        return repository.save(product);
+    }
     @Override
     public List<Product> findAll() { return repository.findAll(); }
 
