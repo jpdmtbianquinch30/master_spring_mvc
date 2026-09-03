@@ -15,6 +15,7 @@ public interface ProductRepository  extends JpaRepository<Product, Long> {
     List<Product> findByPrixLessThan(double prixIsLessThan);
     List<Product> findByPrixBetween(double min, double max);
     List<Product> findByPrixOrderByPrixAsc(double prix);
+    List<Product> findByLibelleContainingIgnoreCase(String mot);
     boolean existsByLibelle(String libelle);
     
     

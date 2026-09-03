@@ -8,6 +8,26 @@
   <name>master_1_spring_mvc Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
+
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>1.18.30</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>javax.validation</groupId>
+          <artifactId>validation-api</artifactId>
+          <version>2.0.1.Final</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.hibernate.validator</groupId>
+          <artifactId>hibernate-validator</artifactId>
+          <version>6.2.5.Final</version>
+      </dependency>
+
       <!-- Thymeleaf -->
       <dependency>
           <groupId>org.thymeleaf</groupId>
@@ -93,7 +113,17 @@
     </dependency>
 
   </dependencies>
-  <build>
-    <finalName>master_1_spring_mvc</finalName>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
