@@ -6,6 +6,7 @@ import master.repository.ProductRepository;
 import master.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import master.exception.ProduitAlreadyExistsException;
 import java.util.List;
 
 @Service
@@ -17,7 +18,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product save(Product product) {
         if (repository.existsByLibelle(product.getLibelle())) {
-            throw new RuntimeException("Un produit avec ce libellé existe déjà");
+            throw new ProduitAlreadyExistsException("Un produit avec ce libellé existe déjà");
         }
         return repository.save(product);
     }
