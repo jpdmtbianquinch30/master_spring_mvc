@@ -49,7 +49,7 @@ public class AppConfig implements ServletContextAware {
     public SpringLiquibase liquibase() {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource());
-        liquibase.setChangeLog("classpath:db/changelog/db.changelog-master.yaml");
+        liquibase.setChangeLog("classpath:db/changelog/changes/db.changelog-master.yaml");
         return liquibase;
     }
 
