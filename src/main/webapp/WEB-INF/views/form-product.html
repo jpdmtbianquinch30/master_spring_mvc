@@ -6,6 +6,13 @@
     <input type="hidden" th:field="*{id}" />
     <input type="text" th:field="*{libelle}" placeholder="Libelle" />
     <input type="number" th:field="*{prix}" placeholder="Prix" step="0.01" />
+    <select name="typeId">
+        <option value="">-- Choisir un type --</option>
+        <option th:each="t : ${types}"
+                th:value="${t.id}"
+                th:text="${t.libelle}"
+                th:selected="${product.type != null and product.type.id == t.id}"></option>
+    </select>
     <button type="submit">Enregistrer</button>
 </form>
 </body>

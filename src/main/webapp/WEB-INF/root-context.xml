@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Contexte RACINE (parent), charge par ContextLoaderListener (voir web.xml).
+  Contient tout ce qui N'EST PAS lie a une servlet particuliere :
+  DataSource, JPA/Hibernate, Repositories, Services, Mappers, et la
+  configuration Spring Security + JWT.
+
+  Les @Controller / @RestController / @ControllerAdvice sont volontairement
+  EXCLUS d'ici : ils sont scannes uniquement par le contexte enfant
+  (spring-servlet.xml), sinon Spring MVC ne les detecterait pas comme
+  gestionnaires de requetes.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       https://www.springframework.org/schema/beans/spring-beans.xsd
+
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Proprietes (secret JWT, duree d'expiration...) -->
+    <context:property-placeholder location="classpath:application.properties"/>
+
+    <!-- Configuration technique (DataSource, JPA, Thymeleaf) : voir config.AppConfig.
+         SwaggerConfig est exclu d'ici : il doit rester dans le contexte de la DispatcherServlet
+         pour pouvoir documenter les @RestController de ce contexte-la. -->
+    <context:component-scan base-package="config">
+        <context:exclude-filter type="assignable" expression="config.SwaggerConfig"/>
+    </context:component-scan>
+
+    <!-- Repositories, Services, Mappers, et la partie securite (JwtUtil, JwtAuthFilter,
+         SecurityConfig, UserDetailsServiceImpl...) -->
+    <context:component-scan base-package="master">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+    </context:component-scan>
+
+</beans>

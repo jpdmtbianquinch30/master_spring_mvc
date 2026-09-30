@@ -1,10 +1,13 @@
 package master.rest;
 
+import master.dto.PageResponseDTO;
 import master.entity.Product;
 import master.dto.ProductDTO;
 import master.mapper.ProductMapper;
 import master.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +63,9 @@ public class ProductRestController {
         Product productBd = service.findById(id);
         productBd.setLibelle(dto.getLibelle());
         productBd.setPrix(dto.getPrix());
+        if (dto.getTypeId() != null) {
+            productBd.setType(mapper.resolveType(dto.getTypeId()));
+        }
         return mapper.toDto(service.save(productBd));
     }
 
@@ -73,8 +79,27 @@ public class ProductRestController {
         if (dto.getPrix() != null && dto.getPrix() > 0) {
             productBd.setPrix(dto.getPrix());
         }
+        if (dto.getTypeId() != null) {
+            productBd.setType(mapper.resolveType(dto.getTypeId()));
+        }
 
         return mapper.toDto(service.save(productBd));
+    }
+
+    // Liste des produits d'un type donne (illustration de la relation @ManyToOne / @OneToMany)
+    @GetMapping("/by-type/{typeId}")
+    public List<ProductDTO> byType(@PathVariable Long typeId) {
+        return service.findByTypeId(typeId)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    // Liste paginee des produits (voir PageResponseDTO)
+    @GetMapping("/page")
+    public PageResponseDTO<ProductDTO> listPaged(
+            @PageableDefault(size = 5, sort = "id") Pageable pageable) {
+        return new PageResponseDTO<>(service.findAll(pageable).map(mapper::toDto));
     }
 
 }

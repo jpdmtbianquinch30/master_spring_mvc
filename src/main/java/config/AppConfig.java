@@ -11,6 +11,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import liquibase.integration.spring.SpringLiquibase;
 
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
@@ -29,17 +30,31 @@ public class AppConfig implements ServletContextAware {
         this.servletContext = servletContext;
     }
 
+    private static String env(String key, String defaultValue) {
+        String value = System.getenv(key);
+        return (value != null && !value.isEmpty()) ? value : defaultValue;
+    }
+
     @Bean
     public DataSource dataSource() {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl("jdbc:postgresql://localhost:5432/diti4_pring_mvc");
-        ds.setUsername("postgres");
-        ds.setPassword("Thiara3003.");
+        ds.setUrl(env("DB_URL", "jdbc:postgresql://localhost:5432/diti4_pring_mvc"));
+        ds.setUsername(env("DB_USERNAME", "postgres"));
+        ds.setPassword(env("DB_PASSWORD", "Thiara3003."));
         return ds;
     }
 
     @Bean
+    public SpringLiquibase liquibase() {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource());
+        liquibase.setChangeLog("classpath:db/changelog/db.changelog-master.yaml");
+        return liquibase;
+    }
+
+    @Bean
+    @DependsOn("liquibase")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
@@ -48,11 +63,12 @@ public class AppConfig implements ServletContextAware {
 
         java.util.Properties props = new java.util.Properties();
         props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        props.put("hibernate.hbm2ddl.auto", "update");
+        props.put("hibernate.hbm2ddl.auto", "validate");   // avant : update
         props.put("hibernate.show_sql", "true");
         em.setJpaProperties(props);
         return em;
     }
+
 
     @Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {

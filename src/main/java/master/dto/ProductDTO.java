@@ -19,4 +19,17 @@ public class ProductDTO {
     @Positive(message = "Le prix doit etre superieur a 0")
     private Double prix;
 
+    // Identifiant du type a associer (envoye par le client)
+    @NotNull(message = "Le type est obligatoire")
+    private Long typeId;
+
+    // Libelle du type, uniquement en lecture (renvoye au client, jamais lu en entree)
+    private String typeLibelle;
+
+    public ProductDTO(Long id, String libelle, Double prix, Long typeId) {
+        this.id = id;
+        this.libelle = libelle;
+        this.prix = prix;
+        this.typeId = typeId;
+    }
 }

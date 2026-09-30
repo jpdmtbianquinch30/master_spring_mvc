@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:15
+    container_name: diti4_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: diti4_pring_mvc
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Thiara3003.
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: master_1_spring_mvc
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/diti4_pring_mvc
+      DB_USERNAME: postgres
+      DB_PASSWORD: Thiara3003.
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:

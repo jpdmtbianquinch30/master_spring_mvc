@@ -1,16 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Contexte de la DispatcherServlet (enfant du contexte racine, voir root-context.xml).
+  Ne contient QUE ce qui doit etre visible de Spring MVC :
+  les @Controller / @RestController / @ControllerAdvice, la configuration Swagger,
+  et le support de la pagination Spring Data dans les arguments de controleurs.
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/mvc
-       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+       https://www.springframework.org/schema/beans/spring-beans.xsd
 
-    <context:component-scan base-package="master, config"/>
-    <mvc:annotation-driven/>
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+
+       http://www.springframework.org/schema/mvc
+       https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- Ne scanner QUE les controleurs (le reste vient du contexte racine parent) -->
+    <context:component-scan base-package="master" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+    </context:component-scan>
+
+    <!-- Configuration Swagger : doit vivre ici pour documenter les @RestController de ce contexte -->
+    <bean class="config.SwaggerConfig"/>
+
+    <!-- Spring MVC : active la resolution de Pageable/Sort en parametre de methode de controleur
+         (?page=0&size=10&sort=libelle,asc) -->
+    <mvc:annotation-driven>
+        <mvc:argument-resolvers>
+            <bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver"/>
+            <bean class="org.springframework.data.web.SortHandlerMethodArgumentResolver"/>
+        </mvc:argument-resolvers>
+    </mvc:annotation-driven>
+
+    <!-- Swagger UI : verifie via "jar tf springfox-swagger-ui-3.0.0.jar" -> les fichiers
+         (index.html, JS, CSS) sont directement sous META-INF/resources/webjars/springfox-swagger-ui/
+         (pas de sous-dossier de version, contrairement a la convention webjar habituelle). -->
+    <mvc:resources mapping="/swagger-ui/**"
+                   location="classpath:/META-INF/resources/webjars/springfox-swagger-ui/"/>
+
+    <mvc:resources mapping="/webjars/**"
+                   location="classpath:/META-INF/resources/webjars/"/>
 
 </beans>
